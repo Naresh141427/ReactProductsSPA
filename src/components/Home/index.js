@@ -17,39 +17,35 @@ class LoginForm extends Component {
     this.setState({password: event.target.value})
   }
 
+  submitForm = async event => {
+    event.preventDefault()
+
+    const {username, password} = this.state
+    const userDetails = {username, password}
+    const url = 'https://apis.ccbp.in/login'
+    const options = {
+      method: 'POST',
+      body: JSON.stringify(userDetails),
+    }
+
+    const response = await fetch(url, options)
+    const data = await response.json()
+    console.log(response, data)
+    if (response.ok === true) {
+      this.onSubmitSuccess()
+    } else {
+      if (username === '') {
+        this.setState({errorMessage: `*Username and Password didn't match`})
+      }
+      if (password === '') {
+        this.setState({errorMessage: `*Username and Password didn't match`})
+      }
+    }
+  }
+
   onSubmitSuccess = () => {
     const {history} = this.props
     history.replace('/')
-  }
-
-  onSubmitFailure = () => {
-    const {username, password} = this.state
-
-    if (username === '') {
-      this.setState({errorMessage: `*Username and Password didn't match`})
-    }
-    if (password === '') {
-      this.setState({errorMessage: `*Username and Password didn't match`})
-    }
-  }
-
-  renderPasswordField = () => {
-    const {password} = this.state
-    return (
-      <>
-        <label className="input-label" htmlFor="password">
-          PASSWORD
-        </label>
-        <input
-          type="password"
-          id="password"
-          className="password-input-filed"
-          placeholder="Password"
-          value={password}
-          onChange={this.onChangePassword}
-        />
-      </>
-    )
   }
 
   renderUsernameField = () => {
@@ -71,24 +67,23 @@ class LoginForm extends Component {
     )
   }
 
-  submitForm = async event => {
-    event.preventDefault()
-
-    const {username, password} = this.state
-    const userDetails = {username, password}
-    const url = 'https://apis.ccbp.in/login'
-    const options = {
-      method: 'POST',
-      body: JSON.stringify(userDetails),
-    }
-
-    const response = await fetch(url, options)
-    const data = await response.json()
-    if (response.ok === true) {
-      this.onSubmitSuccess()
-    } else {
-      this.onSubmitFailure()
-    }
+  renderPasswordField = () => {
+    const {password} = this.state
+    return (
+      <>
+        <label className="input-label" htmlFor="password">
+          PASSWORD
+        </label>
+        <input
+          type="password"
+          id="password"
+          className="password-input-filed"
+          placeholder="Password"
+          value={password}
+          onChange={this.onChangePassword}
+        />
+      </>
+    )
   }
 
   render() {
